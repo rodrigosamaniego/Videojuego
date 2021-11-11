@@ -5,10 +5,11 @@ const ctx = $canvas.getContext('2d')
 //Variables globales
 let intervalId;
 let frames = 0;
-const friction = 0.8;
 const gravity = 0.8;
-const bullets = [];
+const projectiles = [];
 const obstacles = [];
+let isGameOver = false;
+let isGameWon = false;
 
 
 //Clases, propiedades y métodos
@@ -62,6 +63,10 @@ class Character extends GameAsset{
         ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
         
     }
+
+    crash() {
+        return this.x 
+    }
     
     jump() {
 		
@@ -83,6 +88,17 @@ class Character extends GameAsset{
         this.vx = 0;
     }
 
+    isTouching(obstacle) {
+		return (
+			this.x < obstacle.x + obstacle.width &&
+			this.x + this.width > obstacle.x &&
+			this.y < obstacle.y + obstacle.height &&
+			this.y + this.height > obstacle.y
+		);
+	}
+    
+    
+
     
         
 }
@@ -90,13 +106,39 @@ class Character extends GameAsset{
 class Enemy extends GameAsset {
     constructor(x, y, width, height, img){
         super(x, y, width, height, img);
-        this.vx = 0;
-        this.vy = 0;
+        this.health = 130;
     }
     draw(){
         ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
     }
+
+    getsHit (projectile){
+        return (
+            this.x < projectile.x + projectile.width &&
+			this.x + this.width > projectile.x &&
+			this.y < projectile.y + projectile.height &&
+			this.y + this.height > projectile.y
+
+        );
+    }
+
+    liveLoss(){
+        this.health--
+    }
         
+}
+
+class Projectile extends GameAsset {
+    constructor(x, y, width, height, img){
+        super(x, y, width, height, img);
+        this.vx = 0;
+        this.vy = 0;
+    }
+    draw(){
+        this.x+=7;
+        ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+    } 
+
 }
 
 class Obstacle extends GameAsset{
@@ -104,9 +146,9 @@ class Obstacle extends GameAsset{
         super($canvas.width, y, width, height, img)
     }
     draw(){
-        this.x-=5;
+        this.x-=6;
         ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
-        if(this.x < 0) this.x = $canvas.width;
+        // if(this.x < 0) this.x = $canvas.width;
     }
 }
 
@@ -123,13 +165,19 @@ const bossImage =
 const obstacleImage =
 "/images/bomb.png";
 
+const projectileImage =
+"/images/kisspng-shuriken-computer-icons-ninja-weapon-5af5f3f5319961.6333373815260682132032.png"
+
 const board = new Board(0, 0, $canvas.width, $canvas.height, boardImage);
 const ninja = new Character(100, $canvas.height -215, 138, 150, ninjaImage);
 const boss = new Enemy($canvas.width -290, 160, 290, 243, bossImage)
-const bomb = new Obstacle($canvas.width -53, 348, 53, 54, obstacleImage)
+
+
+
 //Funciones del flujo del juego
 function start(){
-    setInterval(() => {
+    if (intervalId) return;
+    intervalId = setInterval(() => {
         update();
     }, 1000 / 60);
 }
@@ -137,13 +185,38 @@ function start(){
 
 function update(){
     frames ++
+    generateObstacles();
+    checkCollitions();
+    checkHits();
+    bossKilled();
    clearCanvas();
    board.draw();
    ninja.draw();
    boss.draw();
-   bomb.draw();
+   gameOver();
+   gameWon();
+   printProjectiles();
+
+   printObstacles();
+  
+   
    
 }
+
+function gameOver() {
+	if (isGameOver) {
+		ctx.font = "40px sans-serif";
+		ctx.fillText("Game Over", $canvas.width / 3, $canvas.height / 2);
+	}
+}
+
+function gameWon() {
+	if (isGameWon) {
+		ctx.font = "40px sans-serif";
+		ctx.fillText("Congratulations", $canvas.width / 3, $canvas.height / 2);
+	}
+}
+
 
     
 
@@ -155,9 +228,50 @@ function clearCanvas () {
     ctx.clearRect(0, 0, $canvas.width, $canvas.height)
 }
 
-function generateObstacles(){
-    // if(frames % 300 === 0) 
+function printProjectiles(){
+    projectiles.forEach((projectile) => projectile.draw());
 }
+
+function generateObstacles(){
+    if (frames % 100 === 0){
+    const bomb = new Obstacle($canvas.width, 367, 33, 34, obstacleImage);
+    obstacles.push(bomb)}
+}
+
+function printObstacles(){
+    
+    obstacles.forEach((bomb)=> 
+        bomb.draw());
+    }
+
+function checkCollitions(){
+    obstacles.forEach((obstacle) => {
+        if(ninja.isTouching(obstacle)){
+            clearInterval(intervalId);
+            isGameOver = true;
+        }
+    });
+}
+
+function checkHits(){
+    projectiles.forEach((projectile) => {
+        if(boss.getsHit(projectile)){
+            boss.health--;
+            
+
+        }
+    })
+}
+
+function bossKilled(){
+    if(boss.health < 1) 
+    {clearInterval(intervalId); isGameWon = true;}
+}
+
+
+
+
+
 
 //Funciones de interacción con el usuario
 
@@ -172,12 +286,19 @@ document.onkeydown = (event) => {
         case "ArrowUp":
             ninja.jump();
             break;
+        case "e":
+            const projectile = new Projectile(ninja.x, ninja.y +70, 10, 10, projectileImage)
+            projectiles.push(projectile)
+            break;
         case "Enter":
             start();
             break;
         default:
             break;
     }
+    
+        
+    
 }
 
 document.onkeyup = (event) => {
