@@ -210,7 +210,7 @@ class Obstacle extends GameAsset{
     draw(){
         this.x-=6;
         ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
-        // if(this.x < 0) this.x = $canvas.width;
+        
     }
 }
 
