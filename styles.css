@@ -34,19 +34,18 @@ canvas {
 #controls{
     font-family: fantasy;
     font-size: xx-large;
+    color: teal;
 }
 
-/* #gamePlaying{
-    background-image: url("/images/sakura3.jpg");
-    justify-content: center;
-    align-items: center;
-    display: flex;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-   
+#directions{
+    font-family: fantasy;
+    color: teal;
 }
- */
+
+#begin{
+    font-family: fantasy;
+    color: slateblue;
+    
+}
 
 

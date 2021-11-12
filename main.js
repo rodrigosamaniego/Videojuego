@@ -157,9 +157,11 @@ class Enemy extends GameAsset {
         this.health = 130;
         this.animation = 0;
         this.img0 = new Image();
+        this.img1 = new Image();
         this.img2 = new Image();
 
         this.img0.src ="/images/Tanque.png";
+        this.img1.src ="/images/tanque amrillo.png"
         this.img2.src = "/images/tanque rojo.png";
 
 
@@ -167,10 +169,9 @@ class Enemy extends GameAsset {
     draw(){
         if(this.health > 60){
             ctx.drawImage(this.img0, this.x, this.y, this.width, this.height);
-        } else {
+        } else  {
             ctx.drawImage(this.img2, this.x, this.y, this.width, this.height);
         }
-        
 }
 
     getsHit (projectile){
@@ -277,6 +278,7 @@ function gameWon() {
 	if (isGameWon) {
 		ctx.font = "40px sans-serif";
 		ctx.fillText("You Have Saved Your Country!", $canvas.width / 6, $canvas.height / 2);
+        
 	}
 }
 
