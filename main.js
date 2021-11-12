@@ -1,6 +1,11 @@
 //Elementos del DOM
+const startScreen = document.querySelector("#gameStart");
+const gameScreen = document.querySelector("#gamePlaying");
+
 const $canvas = document.querySelector("canvas")
+
 const ctx = $canvas.getContext('2d')
+
 
 //Variables globales
 let intervalId;
@@ -46,11 +51,33 @@ class Board extends GameAsset{
 class Character extends GameAsset{
     constructor(x, y, width, height, img){
         super(x, y, width, height, img);
+        this.img0 = new Image();
+        this.img1 = new Image();
+        this.img2 = new Image();
+        this.img3 = new Image();
+        this.img4 = new Image();
+        this.img5 = new Image();
+        this.img6 = new Image();
+        this.img7 = new Image();
+        this.img8 = new Image();
+        this.img9 = new Image();
+
+        this.img0.src ="/images/Run__000.png";
+        this.img1.src ="/images/Run__001.png";
+        this.img2.src ="/images/Run__002.png";
+        this.img3.src ="/images/Run__003.png";
+        this.img4.src ="/images/Run__004.png";
+        this.img5.src ="/images/Run__005.png";
+        this.img6.src ="/images/Run__006.png";
+        this.img7.src ="/images/Run__007.png";
+        this.img8.src ="/images/Run__007.png";
+        this.img9.src ="/images/Run__009.png";
+        this.animation = 0;
+        
         this.vy = 0;
         this.vx = 0;
         this.jumpStrength = 14;
-        // this.jumps = 0;
-		// this.jumping = false;
+        
 }
     draw() {
         this.vy += gravity;
@@ -59,14 +86,35 @@ class Character extends GameAsset{
         if (this.y > $canvas.height - this.height) this.y = $canvas.height  -this.height;
         if (this.x + this.vx > $canvas.width || this.x + this.vx < 0) this.x = 0;
         if(this.y < this.height) this.y = this.height;
+        if(frames % 3 === 0){
+            this.animation++
+            if(this.animation === 9) this.animation = 0;
+        }
         
-        ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
-        
+        if(this.animation === 0){
+            ctx.drawImage(this.img0, this.x, this.y, this.width, this.height);
+        }else if (this.animation === 1) {
+            ctx.drawImage(this.img1, this.x, this.y, this.width, this.height);    
+        }else if (this.animation === 2) {
+            ctx.drawImage(this.img2, this.x, this.y, this.width, this.height); 
+        } else if (this.animation === 3) {
+            ctx.drawImage(this.img3, this.x, this.y, this.width, this.height); 
+        } else if (this.animation === 4) {
+            ctx.drawImage(this.img4, this.x, this.y, this.width, this.height); 
+        } else if (this.animation === 5) {
+            ctx.drawImage(this.img5, this.x, this.y, this.width, this.height); 
+        } else if (this.animation === 6) {
+            ctx.drawImage(this.img6, this.x, this.y, this.width, this.height); 
+        } else if (this.animation === 7) {
+            ctx.drawImage(this.img7, this.x, this.y, this.width, this.height); 
+        } else if (this.animation === 8) {
+            ctx.drawImage(this.img8, this.x, this.y, this.width, this.height); 
+        } else {
+            ctx.drawImage(this.img9, this.x, this.y, this.width, this.height); 
+        } 
     }
 
-    crash() {
-        return this.x 
-    }
+    
     
     jump() {
 		
@@ -107,10 +155,23 @@ class Enemy extends GameAsset {
     constructor(x, y, width, height, img){
         super(x, y, width, height, img);
         this.health = 130;
+        this.animation = 0;
+        this.img0 = new Image();
+        this.img2 = new Image();
+
+        this.img0.src ="/images/Tanque.png";
+        this.img2.src = "/images/tanque rojo.png";
+
+
     }
     draw(){
-        ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
-    }
+        if(this.health > 60){
+            ctx.drawImage(this.img0, this.x, this.y, this.width, this.height);
+        } else {
+            ctx.drawImage(this.img2, this.x, this.y, this.width, this.height);
+        }
+        
+}
 
     getsHit (projectile){
         return (
@@ -154,23 +215,23 @@ class Obstacle extends GameAsset{
 
 //Instancias de las clases
 const boardImage = 
-"/images/background.recortado.enserio.jpg";
+"/images/sakura6.jpg";
 
 const ninjaImage =
-"/images/Genji-OWart.png";
+"/images/Run__001.png";
 
 const bossImage =
-"/images/MSOGT_Bowser.png";
+"/images/Tanque.png";
 
 const obstacleImage =
-"/images/bomb.png";
+"/images/bomb.recortada.png";
 
 const projectileImage =
 "/images/kisspng-shuriken-computer-icons-ninja-weapon-5af5f3f5319961.6333373815260682132032.png"
 
 const board = new Board(0, 0, $canvas.width, $canvas.height, boardImage);
 const ninja = new Character(100, $canvas.height -215, 138, 150, ninjaImage);
-const boss = new Enemy($canvas.width -290, 160, 290, 243, bossImage)
+const boss = new Enemy($canvas.width -360, 260, 360, 137, bossImage)
 
 
 
@@ -180,6 +241,7 @@ function start(){
     intervalId = setInterval(() => {
         update();
     }, 1000 / 60);
+    
 }
 
 
@@ -195,6 +257,7 @@ function update(){
    boss.draw();
    gameOver();
    gameWon();
+   gameStarts();
    printProjectiles();
 
    printObstacles();
@@ -206,15 +269,23 @@ function update(){
 function gameOver() {
 	if (isGameOver) {
 		ctx.font = "40px sans-serif";
-		ctx.fillText("Game Over", $canvas.width / 3, $canvas.height / 2);
+		ctx.fillText("Game Over Refresh To Play Again", $canvas.width / 6, $canvas.height / 2);
 	}
 }
 
 function gameWon() {
 	if (isGameWon) {
 		ctx.font = "40px sans-serif";
-		ctx.fillText("Congratulations", $canvas.width / 3, $canvas.height / 2);
+		ctx.fillText("You Have Saved Your Country!", $canvas.width / 6, $canvas.height / 2);
 	}
+}
+
+function gameStarts (){
+    if(start)startScreen.style.display = "none"
+}
+
+function gamePlaying (){
+    if(startScreen.style.display)gameScreen.style.display = "none"
 }
 
 
@@ -230,37 +301,45 @@ function clearCanvas () {
 
 function printProjectiles(){
     projectiles.forEach((projectile) => projectile.draw());
+    
+   
 }
 
 function generateObstacles(){
     if (frames % 100 === 0){
     const bomb = new Obstacle($canvas.width, 367, 33, 34, obstacleImage);
-    obstacles.push(bomb)}
+    obstacles.push(bomb)
+}
+    obstacles.forEach((obs, index) => {
+    if (obs.x + obs.width < 0) obstacles.splice(1, index);
+});
+
 }
 
+
+
+
+function checkCollitions(){
+    obstacles.forEach((obs) => {
+        if(ninja.isTouching(obs)){
+            clearInterval(intervalId);
+            isGameOver = true;
+        }
+    });
+}
 function printObstacles(){
     
     obstacles.forEach((bomb)=> 
         bomb.draw());
     }
 
-function checkCollitions(){
-    obstacles.forEach((obstacle) => {
-        if(ninja.isTouching(obstacle)){
-            clearInterval(intervalId);
-            isGameOver = true;
-        }
-    });
-}
-
 function checkHits(){
     projectiles.forEach((projectile) => {
         if(boss.getsHit(projectile)){
             boss.health--;
-            
-
         }
     })
+    
 }
 
 function bossKilled(){
@@ -288,7 +367,7 @@ document.onkeydown = (event) => {
             break;
         case "e":
             const projectile = new Projectile(ninja.x, ninja.y +70, 10, 10, projectileImage)
-            projectiles.push(projectile)
+            projectiles.push(projectile) 
             break;
         case "Enter":
             start();

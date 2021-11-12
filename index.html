@@ -4,11 +4,40 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
     <title>Ninja</title>
 </head>
 <body>
-    <h1>Ninja</h1>
-    <canvas width="800px" height="400px" style="border: 1px solid black;"> </canvas>
+   
+    <div id="gameStart">
+        <div class="container">
+          <div>
+            <h1 id="ironNinja" style="font-size: 5em;">IronNinja</h1>
+            <h1 id ="instructions">
+              Shoot the enemy and dodge the bombs to save your country <br>
+              <br>
+              PRESS ENTER TO BEGIN
+              <br> <br>
+              Controls
+            </h1>
+            <ul id = "controls">
+                <li>Move: Left and Right Arrow Keys</li>
+                <li>Jump: Up Arrow Key</li>
+                <li>Shoot: E key</li>
+                
+            </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- <div id="gamePlaying">
+        <div class="container">
+          </div>
+    </div> -->
+
+    
+
+    <canvas id="canvas" width="800px" height="400px" style="border-radius: 25px;"> </canvas>
     <script src="/main.js"> </script>
 </body>
 </html>
