@@ -154,7 +154,7 @@ class Character extends GameAsset{
 class Enemy extends GameAsset {
     constructor(x, y, width, height, img){
         super(x, y, width, height, img);
-        this.health = 130;
+        this.health = 600;
         this.animation = 0;
         this.img0 = new Image();
         this.img1 = new Image();
@@ -167,7 +167,7 @@ class Enemy extends GameAsset {
 
     }
     draw(){
-        if(this.health > 60){
+        if(this.health > 200){
             ctx.drawImage(this.img0, this.x, this.y, this.width, this.height);
         } else  {
             ctx.drawImage(this.img2, this.x, this.y, this.width, this.height);
